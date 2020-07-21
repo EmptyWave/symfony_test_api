@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\{Balance, Transaction, User};
-use App\Service\{Token, TransactionService};
+use App\Service\TransactionService;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,12 +25,6 @@ class PostController extends BaseApiController
      */
     public function indexAction(Request $request): Response
     {
-        $token = $request->query->get('token');
-        if (!Token::isValid($token)) {
-            return $this->errResponse(json_encode($token), Response::HTTP_NON_AUTHORITATIVE_INFORMATION);
-        }
-        $request->query->remove('token');
-
         $data = $request->query->all();
 
         foreach ($data as $prop => $value) {

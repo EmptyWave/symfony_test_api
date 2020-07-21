@@ -22,12 +22,11 @@ class TransactionsTest extends TestCase
     {
         $httpClient = HttpClient::create();
 
-        $token = '11111';
         $idFrom = 1;
         $idTo = 2;
         $amount = 500;
 
-        $response = $httpClient->request('POST', "http://api-symf/api/?token={$token}&from_id={$idFrom}&to_id={$idTo}&amount={$amount}");
+        $response = $httpClient->request('POST', "http://api-symf/api/?from_id={$idFrom}&to_id={$idTo}&amount={$amount}");
 
         $this->assertEquals(200, $response->getStatusCode());
         $data = json_decode($response->getContent(), true);
@@ -47,12 +46,11 @@ class TransactionsTest extends TestCase
     {
         $httpClient = HttpClient::create();
 
-        $token = '11111';
         $idFrom = 1;
         $idTo = 666;
         $amount = 500;
 
-        $response = $httpClient->request('POST', "http://api-symf/api/?token={$token}&from={$idFrom}&to={$idTo}&amount={$amount}");
+        $response = $httpClient->request('POST', "http://api-symf/api/?from={$idFrom}&to={$idTo}&amount={$amount}");
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertEquals('Wrong transaction data', $response->getContent());
     }

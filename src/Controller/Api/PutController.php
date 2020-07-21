@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\{Balance, Transaction, User};
-use App\Service\{Token, TransactionService};
+use App\Service\TransactionService;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,12 +23,6 @@ class PutController extends BaseApiController
      */
     public function indexAction(Request $request): Response
     {
-        $token = $request->query->get('token');
-        if (!Token::isValid($token)) {
-            return $this->errResponse(json_encode($token), Response::HTTP_NON_AUTHORITATIVE_INFORMATION);
-        }
-        $request->query->remove('token');
-
         $idTransaction = $request->query->get('transaction');
         if (empty($idTransaction)) {
             return $this->errResponse("Wrong transaction data", Response::HTTP_PARTIAL_CONTENT);

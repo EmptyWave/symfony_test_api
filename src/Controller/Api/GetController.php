@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\Transaction;
-use App\Service\Token;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,12 +18,6 @@ class GetController extends BaseApiController
      */
     public function indexAction(Request $request): Response
     {
-        $token = $request->query->get('token');
-
-        if (!Token::isValid($token)) {
-            return $this->errResponse("Wrong token", Response::HTTP_NON_AUTHORITATIVE_INFORMATION);
-        }
-
         $idTransaction = $request->query->get('transaction');
 
         if (empty($idTransaction)) {
