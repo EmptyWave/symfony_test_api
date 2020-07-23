@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PutController extends BaseApiController
 {
     /**
-     * @Route("/api/put/", name="api_put", methods={"PUT"})
+     * @Route("/api/", name="api_put", methods={"PUT"})
      * @param Request $request
      * @return Response
      * @throws \Doctrine\Common\Annotations\AnnotationException
@@ -31,32 +31,30 @@ class PutController extends BaseApiController
             ->getRepository(Transaction::class)
             ->find($idTransaction);
 
-        if ($transaction) {
-            if ($transaction->getStatus() == Transaction::ERR_BD) {
-                $userFrom = $this->getDoctrine()
-                    ->getRepository(User::class)
-                    ->find($transaction->getFromId());
-
-                $userTo = $this->getDoctrine()
-                    ->getRepository(User::class)
-                    ->find($transaction->getFromId());
-
-                $balanceFrom = $this->getDoctrine()
-                    ->getRepository(Balance::class)
-                    ->find($userFrom->getAccountId());
-
-                $balanceTo = $this->getDoctrine()
-                    ->getRepository(Balance::class)
-                    ->find($userTo->getAccountId());
-
-                (new TransactionService())->executeTransaction($balanceFrom, $balanceTo, $transaction);
-            } else {
-                return $this->errResponse("No result", Response::HTTP_NO_CONTENT);
-            }
-        } else {
+        if (empty($transaction)) {
+            return $this->errResponse("No result", Response::HTTP_NO_CONTENT);
+        }
+        if ($transaction->getStatus() !== Transaction::ERR_BD) {
             return $this->errResponse("No result", Response::HTTP_NO_CONTENT);
         }
 
+        $userFrom = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($transaction->getFromId());
+
+        $userTo = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($transaction->getFromId());
+
+        $balanceFrom = $this->getDoctrine()
+            ->getRepository(Balance::class)
+            ->find($userFrom->getAccountId());
+
+        $balanceTo = $this->getDoctrine()
+            ->getRepository(Balance::class)
+            ->find($userTo->getAccountId());
+
+        (new TransactionService())->executeTransaction($balanceFrom, $balanceTo, $transaction);
 
         return $this->okResponse($transaction->getDataArray(), Response::HTTP_OK);
     }
