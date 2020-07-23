@@ -42,7 +42,17 @@ class Balance
      */
     public function getBalance(): ?float
     {
-        return $this->balance;
+        return (float)$this->balance;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDataArray(): array
+    {
+        $data = [];
+        $data['balance'] = $this->getBalance();
+        return $data;
     }
 
     /**
@@ -78,7 +88,6 @@ class Balance
             $em->persist($this);
             $em->flush();
         } catch (Exception $e) {
-
         }
     }
 
@@ -93,7 +102,6 @@ class Balance
             $em->merge($this);
             $em->flush();
         } catch (Exception $e) {
-
         }
     }
 
@@ -104,5 +112,10 @@ class Balance
     public function isNegative($value): bool
     {
         return ($this->balance - $value) <= 0;
+    }
+
+    public function isAmountAvailable($value): bool
+    {
+        return ($this->balance >= $value);
     }
 }
