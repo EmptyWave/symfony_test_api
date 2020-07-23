@@ -54,7 +54,7 @@ class Transaction
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $status;
+    public $status;
 
     /**
      * @ORM\Column(type="datetime", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -70,8 +70,8 @@ class Transaction
      */
     public function __construct($data)
     {
-        $this->setFromId($data['from_id'])
-            ->setToId($data['to_id'])
+        $this->setFromId((int)$data['from_id'])
+            ->setToId((int)$data['to_id'])
             ->setAmount($data['amount'])
             ->setCreated();
         $this->validateData();
@@ -209,7 +209,7 @@ class Transaction
      */
     public function getAmount(): ?float
     {
-        return $this->amount;
+        return (float)$this->amount;
     }
 
     /**
@@ -224,9 +224,9 @@ class Transaction
     }
 
     /**
-     * @return null|string
+     * @return null|int
      */
-    public function getStatus(): ?string
+    public function getStatus(): ?int
     {
         return $this->status;
     }
@@ -253,7 +253,6 @@ class Transaction
             $em->persist($this);
             $em->flush();
         } catch (Exception $e) {
-
         }
     }
 
@@ -268,7 +267,6 @@ class Transaction
             $em->merge($this);
             $em->flush();
         } catch (Exception $e) {
-
         }
     }
 
