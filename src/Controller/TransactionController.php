@@ -12,7 +12,7 @@ use App\Service\MyEntityManager;
 class TransactionController extends FOSRestController
 {
     /**
-     * @Route("/api/", name="api_index", methods={"GET", "HEAD"})
+     * @Route("/api/", name="api_index")
      * @return Response
      */
     public function indexAction()
