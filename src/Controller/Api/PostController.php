@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PostController extends BaseApiController
 {
     /**
-     * @Route("/api/post/", name="api_post", methods={"POST"})
+     * @Route("/api/", name="api_post", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws \Doctrine\Common\Annotations\AnnotationException
@@ -33,37 +33,39 @@ class PostController extends BaseApiController
             }
         }
 
-        if (!empty($data['from_id'])) {
-            $userFrom = $this->getDoctrine()
-                ->getRepository(User::class)
-                ->find($data['from_id']);
+        if (empty($data['from_id']) || empty($data['to_id'])) {
+            return $this->errResponse("Wrong data - user", Response::HTTP_PARTIAL_CONTENT);
         }
-        if (!empty($data['to_id'])) {
-            $userTo = $this->getDoctrine()
-                ->getRepository(User::class)
-                ->find($data['to_id']);
+        $userFrom = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($data['from_id']);
+        $userTo = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($data['to_id']);
+
+        if (empty($userFrom) || empty($userTo)) {
+            return $this->errResponse("Wrong data - user", Response::HTTP_PARTIAL_CONTENT);
         }
 
-        if (isset($userFrom) && isset($userTo)) {
-            $balanceFrom = $this->getDoctrine()
-                ->getRepository(Balance::class)
-                ->find($userFrom->getAccountId());
-            $balanceTo = $this->getDoctrine()
-                ->getRepository(Balance::class)
-                ->find($userTo->getAccountId());
-            if (isset($balanceFrom) && isset($balanceTo)) {
-                $transaction = new Transaction($data);
-            } else {
-                return $this->errResponse("Wrong transaction data", Response::HTTP_PARTIAL_CONTENT);
-            }
-        } else {
-            return $this->errResponse("Wrong transaction data", Response::HTTP_PARTIAL_CONTENT);
+        $balanceFrom = $this->getDoctrine()
+            ->getRepository(Balance::class)
+            ->find($userFrom->getAccountId());
+        $balanceTo = $this->getDoctrine()
+            ->getRepository(Balance::class)
+            ->find($userTo->getAccountId());
+
+        if (empty($balanceFrom) || empty($balanceTo)) {
+            return $this->errResponse("Wrong data", Response::HTTP_PARTIAL_CONTENT);
+        } elseif (!$balanceFrom->isAmountAvailable($data['amount'])) {
+            return $this->errResponse("Wrong data - amount", Response::HTTP_PARTIAL_CONTENT);
         }
+
+        $transaction = new Transaction($data);
 
         if ($transaction->hasNoErr()) {
             (new TransactionService())->executeTransaction($balanceFrom, $balanceTo, $transaction);
         } else {
-            return $this->errResponse("Wrong transaction data", Response::HTTP_PARTIAL_CONTENT);
+            return $this->errResponse("Wrong transaction data - transaction ". $transaction->status, Response::HTTP_PARTIAL_CONTENT);
         }
 
         return $this->okResponse($transaction->getDataArray(), Response::HTTP_OK);
