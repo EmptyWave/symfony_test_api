@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DeleteController extends BaseApiController
 {
     /**
-     * @Route("/api/delete/", name="api_delete", methods={"DELETE"})
+     * @Route("/api/", name="api_delete", methods={"DELETE"})
      * @param Request $request
      * @return Response
      */
