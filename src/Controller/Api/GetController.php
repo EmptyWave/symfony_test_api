@@ -83,6 +83,5 @@ class GetController extends BaseApiController
         } else {
             return $this->errResponse("No result", Response::HTTP_NO_CONTENT);
         }
-
     }
 }

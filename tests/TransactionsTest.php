@@ -53,7 +53,8 @@ class TransactionsTest extends TestCase
 
         $response = $httpClient->request(
             'POST',
-            "http://task4/api/?from_id={$idFrom}&to_id={$idTo}&amount={$amount}");
+            "http://task4/api/?from_id={$idFrom}&to_id={$idTo}&amount={$amount}"
+        );
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertEquals('Wrong data - user', $response->getContent());
     }
@@ -74,7 +75,8 @@ class TransactionsTest extends TestCase
 
         $response = $httpClient->request(
             'POST',
-            "http://task4/api/?from_id={$idFrom}&to_id={$idTo}&amount={$amount}");
+            "http://task4/api/?from_id={$idFrom}&to_id={$idTo}&amount={$amount}"
+        );
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertEquals('Wrong data - amount', $response->getContent());
     }

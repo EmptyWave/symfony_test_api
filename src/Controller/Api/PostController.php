@@ -65,7 +65,10 @@ class PostController extends BaseApiController
         if ($transaction->hasNoErr()) {
             (new TransactionService())->executeTransaction($balanceFrom, $balanceTo, $transaction);
         } else {
-            return $this->errResponse("Wrong transaction data - transaction ". $transaction->status, Response::HTTP_PARTIAL_CONTENT);
+            return $this->errResponse(
+                "Wrong transaction data - transaction " . $transaction->status,
+                Response::HTTP_PARTIAL_CONTENT
+            );
         }
 
         return $this->okResponse($transaction->getDataArray(), Response::HTTP_OK);
