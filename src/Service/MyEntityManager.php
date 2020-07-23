@@ -33,8 +33,9 @@ class MyEntityManager
         $dbParams = array(
             'driver' => 'pdo_mysql',
             'user' => 'root',
-            'password' => '',
-            'dbname' => 'symfony_tests',
+            'password' => 'root',
+            'dbname' => 'test_case',
+            'port' => '3307',
         );
 
         return EntityManager::create($dbParams, $config);
